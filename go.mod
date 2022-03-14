@@ -1,16 +1,19 @@
-module grass
+module github.com/yasudanaoya/grass
 
 go 1.17
 
 require (
 	github.com/google/go-github/v43 v43.0.1-0.20220308133331-b4e931b7ee2c
 	github.com/labstack/echo/v4 v4.7.0
+	github.com/migueleliasweb/go-github-mock v0.0.7
 	github.com/stretchr/testify v1.7.0
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/google/go-github/v41 v41.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect

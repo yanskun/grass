@@ -30,11 +30,26 @@ func (c *contributeAppSrv) Get(
 	ctx context.Context,
 	cmd ContributeAppSrvCmd,
 ) (bool, error) {
-	opt := &github.ListOptions{}
-	// repos, _, err := c.githubClient.Repositories.ListByOrg(ctx, "github", opt)
-	orgs, _, err := c.githubClient.Organizations.List(ctx, cmd.username, opt)
+	orgNames, err := c.getOrgNames(ctx, cmd)
 	if err != nil {
 		return false, err
+	}
+
+	awners := make([]string, len(orgNames)+1)
+	awners = append(awners, orgNames...)
+	awners = append(awners, cmd.username)
+
+	return len(orgNames) > 1, nil
+}
+
+func (c *contributeAppSrv) getOrgNames(
+	ctx context.Context,
+	cmd ContributeAppSrvCmd,
+) ([]string, error) {
+	opt := &github.ListOptions{}
+	orgs, _, err := c.githubClient.Organizations.List(ctx, cmd.username, opt)
+	if err != nil {
+		return nil, err
 	}
 
 	orgNames := make([]string, len(orgs))
@@ -42,5 +57,5 @@ func (c *contributeAppSrv) Get(
 		orgNames[i] = org.GetLogin()
 	}
 
-	return len(orgNames) > 0, nil
+	return orgNames, nil
 }

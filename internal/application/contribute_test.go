@@ -6,9 +6,11 @@ import (
 
 	"github.com/google/go-github/v43/github"
 	"github.com/stretchr/testify/assert"
+	"github.com/yasudanaoya/grass/test/testdata"
 )
 
-func Test_contributeAppSrv_Get(t *testing.T) {
+func Test_contributeAppSrv_getOrgNames(t *testing.T) {
+	client := testdata.MockGitHubClient()
 	type fields struct {
 		githubClient github.Client
 	}
@@ -17,23 +19,24 @@ func Test_contributeAppSrv_Get(t *testing.T) {
 		cmd ContributeAppSrvCmd
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   bool
+		name    string
+		fields  fields
+		args    args
+		want    []string
+		wantErr bool
 	}{
 		{
 			name: "Success",
 			fields: fields{
-				githubClient: *github.NewClient(nil),
+				githubClient: *client,
 			},
 			args: args{
 				ctx: context.Background(),
 				cmd: ContributeAppSrvCmd{
-					username: "octocat",
+					username: "king",
 				},
 			},
-			want: false,
+			want: []string{"g-boys"},
 		},
 	}
 	for _, tt := range tests {
@@ -41,7 +44,7 @@ func Test_contributeAppSrv_Get(t *testing.T) {
 			c := &contributeAppSrv{
 				githubClient: tt.fields.githubClient,
 			}
-			got, err := c.Get(tt.args.ctx, tt.args.cmd)
+			got, err := c.getOrgNames(tt.args.ctx, tt.args.cmd)
 
 			assert.NoError(t, err)
 			assert.Equal(t, tt.want, got)
