@@ -11,6 +11,8 @@ import (
 
 func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 	client := testdata.MockGitHubClient()
+	var s []string
+
 	type fields struct {
 		githubClient github.Client
 	}
@@ -19,11 +21,11 @@ func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 		cmd ContributeAppSrvCmd
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    []string
-		wantErr bool
+		name      string
+		fields    fields
+		args      args
+		want      []string
+		assertion assert.ErrorAssertionFunc
 	}{
 		{
 			name: "Success",
@@ -36,7 +38,19 @@ func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 					username: "king",
 				},
 			},
-			want: []string{"g-boys"},
+			want:      []string{"g-boys"},
+			assertion: assert.NoError,
+		},
+		{
+			name: "Error",
+			fields: fields{
+				githubClient: *client,
+			},
+			args: args{
+				ctx: context.Background(),
+			},
+			want:      s,
+			assertion: assert.Error,
 		},
 	}
 	for _, tt := range tests {
@@ -46,7 +60,7 @@ func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 			}
 			got, err := c.getOrgNames(tt.args.ctx, tt.args.cmd)
 
-			assert.NoError(t, err)
+			tt.assertion(t, err)
 			assert.Equal(t, tt.want, got)
 		})
 	}
