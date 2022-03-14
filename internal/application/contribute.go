@@ -8,7 +8,11 @@ import (
 
 type (
 	ContributeAppSrv interface {
-		Get(ctx context.Context) (bool, error)
+		Get(ctx context.Context, cmd ContributeAppSrvCmd) (bool, error)
+	}
+
+	ContributeAppSrvCmd struct {
+		username string
 	}
 
 	contributeAppSrv struct {
@@ -22,14 +26,21 @@ func NewContributeAppSrv(githubClient github.Client) ContributeAppSrv {
 	}
 }
 
-func (c *contributeAppSrv) Get(ctx context.Context) (bool, error) {
-	opt := &github.RepositoryListByOrgOptions{Type: "public"}
-	repos, _, err := c.githubClient.Repositories.ListByOrg(ctx, "github", opt)
+func (c *contributeAppSrv) Get(
+	ctx context.Context,
+	cmd ContributeAppSrvCmd,
+) (bool, error) {
+	opt := &github.ListOptions{}
+	// repos, _, err := c.githubClient.Repositories.ListByOrg(ctx, "github", opt)
+	orgs, _, err := c.githubClient.Organizations.List(ctx, cmd.username, opt)
 	if err != nil {
 		return false, err
 	}
 
-	result := len(repos) > 0
+	orgNames := make([]string, len(orgs))
+	for i, org := range orgs {
+		orgNames[i] = org.GetLogin()
+	}
 
-	return result, nil
+	return len(orgNames) > 0, nil
 }

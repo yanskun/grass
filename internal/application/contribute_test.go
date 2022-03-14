@@ -14,6 +14,7 @@ func Test_contributeAppSrv_Get(t *testing.T) {
 	}
 	type args struct {
 		ctx context.Context
+		cmd ContributeAppSrvCmd
 	}
 	tests := []struct {
 		name   string
@@ -28,8 +29,11 @@ func Test_contributeAppSrv_Get(t *testing.T) {
 			},
 			args: args{
 				ctx: context.Background(),
+				cmd: ContributeAppSrvCmd{
+					username: "octocat",
+				},
 			},
-			want: true,
+			want: false,
 		},
 	}
 	for _, tt := range tests {
@@ -37,7 +41,8 @@ func Test_contributeAppSrv_Get(t *testing.T) {
 			c := &contributeAppSrv{
 				githubClient: tt.fields.githubClient,
 			}
-			got, err := c.Get(tt.args.ctx)
+			got, err := c.Get(tt.args.ctx, tt.args.cmd)
+
 			assert.NoError(t, err)
 			assert.Equal(t, tt.want, got)
 		})
