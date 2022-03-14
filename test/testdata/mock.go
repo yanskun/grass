@@ -11,7 +11,26 @@ func MockGitHubClient() *github.Client {
 			mock.GetUsersOrgsByUsername,
 			[]github.Organization{
 				{
-					Login: github.String("g-boys"),
+					Login: github.String("japan"),
+				},
+			},
+		),
+		mock.WithRequestMatch(
+			mock.GetOrgsReposByOrg,
+			[]github.Repository{
+				{
+					Name: github.String("Mt_Fuji"),
+				},
+			},
+		),
+		mock.WithRequestMatch(
+			mock.GetUsersReposByUsername,
+			[]github.Repository{
+				{
+					Name: github.String("skytree"),
+				},
+				{
+					Name: github.String("kokugikan"),
 				},
 			},
 		),

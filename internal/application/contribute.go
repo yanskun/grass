@@ -59,3 +59,31 @@ func (c *contributeAppSrv) getOrgNames(
 
 	return orgNames, nil
 }
+
+func (c *contributeAppSrv) getAllRepos(
+	ctx context.Context,
+	cmd ContributeAppSrvCmd,
+	orgNames []string,
+) ([]*github.Repository, error) {
+	oopt := &github.RepositoryListByOrgOptions{}
+
+	repos := make([]*github.Repository, 0)
+	for _, orgName := range orgNames {
+		ors, _, err := c.githubClient.Repositories.ListByOrg(ctx, orgName, oopt)
+		if err != nil {
+			return nil, err
+		}
+
+		repos = append(repos, ors...)
+	}
+
+	uopt := &github.RepositoryListOptions{}
+	urepos, _, err := c.githubClient.Repositories.List(ctx, cmd.username, uopt)
+	if err != nil {
+		return nil, err
+	}
+
+	repos = append(repos, urepos...)
+
+	return repos, nil
+}

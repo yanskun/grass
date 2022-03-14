@@ -35,10 +35,10 @@ func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				cmd: ContributeAppSrvCmd{
-					username: "king",
+					username: "tokyo",
 				},
 			},
-			want:      []string{"g-boys"},
+			want:      []string{"japan"},
 			assertion: assert.NoError,
 		},
 		{
@@ -59,6 +59,59 @@ func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 				githubClient: tt.fields.githubClient,
 			}
 			got, err := c.getOrgNames(tt.args.ctx, tt.args.cmd)
+
+			tt.assertion(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func Test_contributeAppSrv_getAllRepos(t *testing.T) {
+	client := testdata.MockGitHubClient()
+
+	type fields struct {
+		githubClient github.Client
+	}
+	type args struct {
+		ctx      context.Context
+		cmd      ContributeAppSrvCmd
+		orgNames []string
+	}
+	tests := []struct {
+		name      string
+		fields    fields
+		args      args
+		want      []*github.Repository
+		assertion assert.ErrorAssertionFunc
+	}{
+		{
+			name: "Success",
+			fields: fields{
+				githubClient: *client,
+			},
+			args: args{
+				ctx: context.Background(),
+				cmd: ContributeAppSrvCmd{
+					username: "tokyo",
+				},
+				orgNames: []string{
+					"japan",
+				},
+			},
+			want: []*github.Repository{
+				{Name: github.String("Mt_Fuji")},
+				{Name: github.String("skytree")},
+				{Name: github.String("kokugikan")},
+			},
+			assertion: assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &contributeAppSrv{
+				githubClient: tt.fields.githubClient,
+			}
+			got, err := c.getAllRepos(tt.args.ctx, tt.args.cmd, tt.args.orgNames)
 
 			tt.assertion(t, err)
 			assert.Equal(t, tt.want, got)
