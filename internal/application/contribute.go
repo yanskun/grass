@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/go-github/v43/github"
 )
@@ -86,4 +87,40 @@ func (c *contributeAppSrv) getAllRepos(
 	repos = append(repos, urepos...)
 
 	return repos, nil
+}
+
+func (c *contributeAppSrv) findTodayCommit(
+	ctx context.Context,
+	cmd ContributeAppSrvCmd,
+	repos []*github.Repository,
+) (bool, error) {
+	var isCommitted bool
+	for _, repo := range repos {
+
+		today := time.Now()
+		yesterday := today.AddDate(0, 0, -1)
+		opt := &github.CommitsListOptions{
+			Author: cmd.username,
+			Until:  today,
+			Since:  yesterday,
+		}
+		contributors, _, err :=
+			c.githubClient.Repositories.ListCommits(
+				ctx,
+				repo.GetOwner().GetLogin(),
+				repo.GetName(),
+				opt,
+			)
+
+		if err != nil {
+			return false, err
+		}
+
+		if len(contributors) > 0 {
+			isCommitted = true
+			break
+		}
+	}
+
+	return isCommitted, nil
 }

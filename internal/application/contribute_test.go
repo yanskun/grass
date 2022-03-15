@@ -118,3 +118,81 @@ func Test_contributeAppSrv_getAllRepos(t *testing.T) {
 		})
 	}
 }
+
+func Test_contributeAppSrv_findTodayCommit(t *testing.T) {
+	client := testdata.MockGitHubClient()
+	emptyClient := testdata.MockGitHubClientWithEmpty()
+
+	type fields struct {
+		githubClient github.Client
+	}
+	type args struct {
+		ctx   context.Context
+		cmd   ContributeAppSrvCmd
+		repos []*github.Repository
+	}
+	tests := []struct {
+		name      string
+		fields    fields
+		args      args
+		want      bool
+		assertion assert.ErrorAssertionFunc
+	}{
+		{
+			name: "Found",
+			fields: fields{
+				githubClient: *client,
+			},
+			args: args{
+				ctx: context.Background(),
+				cmd: ContributeAppSrvCmd{
+					username: "tokyo",
+				},
+				repos: []*github.Repository{
+					{
+						Name: github.String("Mt_Fuji"),
+						Owner: &github.User{
+							Login: github.String("tokyo"),
+						},
+					},
+				},
+			},
+			want:      true,
+			assertion: assert.NoError,
+		},
+		{
+			name: "Not Found",
+			fields: fields{
+				githubClient: *emptyClient,
+			},
+			args: args{
+				ctx: context.Background(),
+				cmd: ContributeAppSrvCmd{
+					username: "tokyo",
+				},
+				repos: []*github.Repository{
+					{
+						Name: github.String("Mt_Fuji"),
+						Owner: &github.User{
+							Login: github.String("tokyo"),
+						},
+					},
+				},
+			},
+			want:      false,
+			assertion: assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			c := &contributeAppSrv{
+				githubClient: tt.fields.githubClient,
+			}
+			got, err := c.findTodayCommit(tt.args.ctx, tt.args.cmd, tt.args.repos)
+
+			tt.assertion(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
