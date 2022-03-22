@@ -7,9 +7,7 @@ import (
 	"github.com/migueleliasweb/go-github-mock/src/mock"
 )
 
-func MockGitHubClient() *github.Client {
-	now := time.Now()
-
+func MockGetOrgNamesClient() *github.Client {
 	mockedHTTPClient := mock.NewMockedHTTPClient(
 		mock.WithRequestMatch(
 			mock.GetUsersOrgsByUsername,
@@ -19,6 +17,13 @@ func MockGitHubClient() *github.Client {
 				},
 			},
 		),
+	)
+
+	return github.NewClient(mockedHTTPClient)
+}
+
+func MockGetAllReposClient() *github.Client {
+	mockedHTTPClient := mock.NewMockedHTTPClient(
 		mock.WithRequestMatch(
 			mock.GetOrgsReposByOrg,
 			[]github.Repository{
@@ -38,6 +43,15 @@ func MockGitHubClient() *github.Client {
 				},
 			},
 		),
+	)
+
+	return github.NewClient(mockedHTTPClient)
+}
+
+func MockFindTodayCommitClient() *github.Client {
+	now := time.Now()
+
+	mockedHTTPClient := mock.NewMockedHTTPClient(
 		mock.WithRequestMatch(
 			mock.GetReposCommitsByOwnerByRepo,
 			[]github.RepositoryCommit{
@@ -54,16 +68,69 @@ func MockGitHubClient() *github.Client {
 					},
 				},
 			},
+			[]github.RepositoryCommit{},
 		),
 	)
 
 	return github.NewClient(mockedHTTPClient)
 }
 
-func MockGitHubClientWithEmpty() *github.Client {
+func MockContributAppSrvGetClient() *github.Client {
+	now := time.Now()
+
 	mockedHTTPClient := mock.NewMockedHTTPClient(
 		mock.WithRequestMatch(
+			mock.GetUsersOrgsByUsername,
+			[]github.Organization{
+				{
+					Login: github.String("japan"),
+				},
+			},
+		),
+		mock.WithRequestMatch(
+			mock.GetOrgsReposByOrg,
+			[]github.Repository{
+				{
+					Name: github.String("Mt_Fuji"),
+					Owner: &github.User{
+						Login: github.String("tokyo"),
+					},
+				},
+			},
+		),
+		mock.WithRequestMatch(
+			mock.GetUsersReposByUsername,
+			[]github.Repository{
+				{
+					Name: github.String("skytree"),
+					Owner: &github.User{
+						Login: github.String("tokyo"),
+					},
+				},
+				{
+					Name: github.String("kokugikan"),
+					Owner: &github.User{
+						Login: github.String("japan"),
+					},
+				},
+			},
+		),
+		mock.WithRequestMatch(
 			mock.GetReposCommitsByOwnerByRepo,
+			[]github.RepositoryCommit{
+				{
+					Author: &github.User{
+						Login: github.String("tokyo"),
+					},
+					Commit: &github.Commit{
+						Author: &github.CommitAuthor{
+							Date:  &now,
+							Name:  github.String("tokyo"),
+							Login: github.String("tokyo"),
+						},
+					},
+				},
+			},
 			[]github.RepositoryCommit{},
 		),
 	)

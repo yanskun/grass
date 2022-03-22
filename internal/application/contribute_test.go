@@ -10,7 +10,7 @@ import (
 )
 
 func Test_contributeAppSrv_getOrgNames(t *testing.T) {
-	client := testdata.MockGitHubClient()
+	client := testdata.MockGetOrgNamesClient()
 	var s []string
 
 	type fields struct {
@@ -67,7 +67,7 @@ func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 }
 
 func Test_contributeAppSrv_getAllRepos(t *testing.T) {
-	client := testdata.MockGitHubClient()
+	client := testdata.MockGetAllReposClient()
 
 	type fields struct {
 		githubClient github.Client
@@ -120,8 +120,7 @@ func Test_contributeAppSrv_getAllRepos(t *testing.T) {
 }
 
 func Test_contributeAppSrv_findTodayCommit(t *testing.T) {
-	client := testdata.MockGitHubClient()
-	emptyClient := testdata.MockGitHubClientWithEmpty()
+	client := testdata.MockFindTodayCommitClient()
 
 	type fields struct {
 		githubClient github.Client
@@ -163,7 +162,7 @@ func Test_contributeAppSrv_findTodayCommit(t *testing.T) {
 		{
 			name: "Not Found",
 			fields: fields{
-				githubClient: *emptyClient,
+				githubClient: *client,
 			},
 			args: args{
 				ctx: context.Background(),
@@ -190,6 +189,52 @@ func Test_contributeAppSrv_findTodayCommit(t *testing.T) {
 				githubClient: tt.fields.githubClient,
 			}
 			got, err := c.findTodayCommit(tt.args.ctx, tt.args.cmd, tt.args.repos)
+
+			tt.assertion(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func Test_contributeAppSrv_Get(t *testing.T) {
+	client := testdata.MockContributAppSrvGetClient()
+
+	type fields struct {
+		githubClient github.Client
+	}
+	type args struct {
+		ctx context.Context
+		cmd ContributeAppSrvCmd
+	}
+	tests := []struct {
+		name      string
+		fields    fields
+		args      args
+		want      bool
+		assertion assert.ErrorAssertionFunc
+	}{
+		{
+			name: "",
+			fields: fields{
+				githubClient: *client,
+			},
+			args: args{
+				ctx: context.Background(),
+				cmd: ContributeAppSrvCmd{
+					username: "tokyo",
+				},
+			},
+			want:      true,
+			assertion: assert.NoError,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			c := &contributeAppSrv{
+				githubClient: tt.fields.githubClient,
+			}
+			got, err := c.Get(tt.args.ctx, tt.args.cmd)
 
 			tt.assertion(t, err)
 			assert.Equal(t, tt.want, got)

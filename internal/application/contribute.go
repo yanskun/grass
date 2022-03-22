@@ -36,11 +36,20 @@ func (c *contributeAppSrv) Get(
 		return false, err
 	}
 
-	awners := make([]string, len(orgNames)+1)
+	awners := make([]string, 0)
 	awners = append(awners, orgNames...)
-	awners = append(awners, cmd.username)
 
-	return len(orgNames) > 1, nil
+	repos, err := c.getAllRepos(ctx, cmd, awners)
+	if err != nil {
+		return false, err
+	}
+
+	isCommitted, err := c.findTodayCommit(ctx, cmd, repos)
+	if err != nil {
+		return false, err
+	}
+
+	return isCommitted, nil
 }
 
 func (c *contributeAppSrv) getOrgNames(
@@ -104,10 +113,11 @@ func (c *contributeAppSrv) findTodayCommit(
 			Until:  today,
 			Since:  yesterday,
 		}
+		owner := repo.GetOwner().GetLogin()
 		contributors, _, err :=
 			c.githubClient.Repositories.ListCommits(
 				ctx,
-				repo.GetOwner().GetLogin(),
+				owner,
 				repo.GetName(),
 				opt,
 			)
