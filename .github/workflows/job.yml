@@ -24,11 +24,8 @@ jobs:
         shell: bash
         run: |
           touch .env
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> .env
+          echo "TOKEN=${{ secrets.TOKEN }}" >> .env
           echo "WEBHOOK_URL=${{ secrets.WEBHOOK_URL }}" >> .env
 
       - name: Run
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: go run cmd/job/main.go

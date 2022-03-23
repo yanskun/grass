@@ -35,7 +35,7 @@ func Test_contributeAppSrv_getOrgNames(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				cmd: ContributeAppSrvCmd{
-					username: "tokyo",
+					Username: "tokyo",
 				},
 			},
 			want:      []string{"japan"},
@@ -92,7 +92,7 @@ func Test_contributeAppSrv_getAllRepos(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				cmd: ContributeAppSrvCmd{
-					username: "tokyo",
+					Username: "tokyo",
 				},
 				orgNames: []string{
 					"japan",
@@ -145,7 +145,7 @@ func Test_contributeAppSrv_findTodayCommit(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				cmd: ContributeAppSrvCmd{
-					username: "tokyo",
+					Username: "tokyo",
 				},
 				repos: []*github.Repository{
 					{
@@ -167,7 +167,7 @@ func Test_contributeAppSrv_findTodayCommit(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				cmd: ContributeAppSrvCmd{
-					username: "tokyo",
+					Username: "tokyo",
 				},
 				repos: []*github.Repository{
 					{
@@ -221,7 +221,7 @@ func Test_contributeAppSrv_Get(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				cmd: ContributeAppSrvCmd{
-					username: "tokyo",
+					Username: "tokyo",
 				},
 			},
 			want:      true,

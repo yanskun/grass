@@ -28,7 +28,7 @@ func main() {
 			if err != nil {
 				log.Fatal("Error loading .env file")
 			}
-			token := os.Getenv("GITHUB_TOKEN")
+			token := os.Getenv("TOKEN")
 			url := os.Getenv("WEBHOOK_URL")
 
 			ts := oauth2.StaticTokenSource(
@@ -38,7 +38,9 @@ func main() {
 			client := github.NewClient(tc)
 
 			srv := application.NewContributeAppSrv(*client)
-			cmd := application.ContributeAppSrvCmd{}
+			cmd := application.ContributeAppSrvCmd{
+				Username: "yasudanaya",
+			}
 
 			result, err := srv.Get(ctx, cmd)
 			if err != nil {

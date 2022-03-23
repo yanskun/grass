@@ -13,7 +13,7 @@ type (
 	}
 
 	ContributeAppSrvCmd struct {
-		username string
+		Username string
 	}
 
 	contributeAppSrv struct {
@@ -57,7 +57,7 @@ func (c *contributeAppSrv) getOrgNames(
 	cmd ContributeAppSrvCmd,
 ) ([]string, error) {
 	opt := &github.ListOptions{}
-	orgs, _, err := c.githubClient.Organizations.List(ctx, cmd.username, opt)
+	orgs, _, err := c.githubClient.Organizations.List(ctx, cmd.Username, opt)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (c *contributeAppSrv) getAllRepos(
 	}
 
 	uopt := &github.RepositoryListOptions{}
-	urepos, _, err := c.githubClient.Repositories.List(ctx, cmd.username, uopt)
+	urepos, _, err := c.githubClient.Repositories.List(ctx, cmd.Username, uopt)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (c *contributeAppSrv) findTodayCommit(
 		today := time.Now()
 		yesterday := today.AddDate(0, 0, -1)
 		opt := &github.CommitsListOptions{
-			Author: cmd.username,
+			Author: cmd.Username,
 			Until:  today,
 			Since:  yesterday,
 		}
