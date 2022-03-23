@@ -22,8 +22,3 @@ jobs:
 
       - name: Build 🛠
         run: go build -v ./...
-
-      # - name: Lint 💊
-      #   uses: golangci/golangci-lint-action@v2
-      #   with:
-      #     version: latest
