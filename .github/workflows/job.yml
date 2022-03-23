@@ -20,13 +20,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Write env file
-        uses: DamianReeves/write-file-action
-        with:
-          path: ${{ env.home }}/.env
-          contents: |
-            GITHUB_TOKEN={{ secrets.GITHUB_TOKEN }}
-            WEBHOOK_URL={{ secrets.WEBHOOK_URL }}
+      - name: Create dot env file
+      - shell: bash
+        run: |
+          touch .env
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> .env
+          echo "WEBHOOK_URL=${{ secrets.WEBHOOK_URL }}" >> .env
 
       - name: Run
         env:
