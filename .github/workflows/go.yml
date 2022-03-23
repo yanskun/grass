@@ -23,7 +23,7 @@ jobs:
       - name: Build 🛠
         run: go build -v ./...
 
-      - name: Lint Code Base 💊
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_ALL_CODEBASE: false
+      - name: Lint 💊
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
