@@ -37,7 +37,7 @@ const { data } = await ky.post(url, {
 const totalContributions: number = data.user.contributionsCollection.contributionCalendar.totalContributions;
 
 if (totalContributions > 0) {
-  console.log("コミットしてます")
+  console.log("草生えてます")
 } else {
-  console.log("コミットしてません")
+  console.log("草生えてません")
 }
