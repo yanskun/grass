@@ -1,0 +1,19 @@
+name: Job
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 13 * * *"
+
+jobs:
+  run:
+    name: run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: 1.18.2
+      - run: deno run --allow-read --allow-env --allow-net main.ts
