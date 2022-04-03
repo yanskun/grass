@@ -12,20 +12,20 @@ jobs:
     name: run
     runs-on: ubuntu-latest
     steps:
-      - name: Set Up
-        uses: actions/setup-go@v2
-        with:
-          go-version: ~1.17
-
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Set Up deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: 1.18.2
 
       - name: Create dot env file
         shell: bash
         run: |
           touch .env
-          echo "TOKEN=${{ secrets.TOKEN }}" >> .env
+          echo "READ_USER_TOKEN=${{ secrets.READ_USER_TOKEN }}" >> .env
           echo "WEBHOOK_URL=${{ secrets.WEBHOOK_URL }}" >> .env
 
       - name: Run
-        run: go run cmd/job/main.go
+        run: deno run --allow-read --allow-env --allow-net main.ts
