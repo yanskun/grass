@@ -12,8 +12,20 @@ jobs:
     name: run
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set Up deno
+        uses: denoland/setup-deno@v1
         with:
           deno-version: 1.18.2
-      - run: deno run --allow-read --allow-env --allow-net main.ts
+
+      - name: Create dot env file
+        shell: bash
+        run: |
+          touch .env
+          echo "READ_USER_TOKEN=${{ secrets.READ_USER_TOKEN }}" >> .env
+          echo "WEBHOOK_URL=${{ secrets.WEBHOOK_URL }}" >> .env
+
+      - name: Run
+        run: deno run --allow-read --allow-env --allow-net main.ts
