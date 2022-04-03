@@ -3,9 +3,9 @@ import dayjs from "https://cdn.skypack.dev/dayjs@1.10.4";
 import { READ_USER_TOKEN } from "./env.ts";
 
 const query = `
-query($userName:String!, $date:DateTime) {
+query($userName:String!, $from:DateTime, $to:DateTime) {
   user(login: $userName){
-    contributionsCollection(from: $date, to: $date) {
+    contributionsCollection(from: $from, to: $to) {
       contributionCalendar {
         totalContributions
       }
@@ -14,12 +14,14 @@ query($userName:String!, $date:DateTime) {
 }
 `;
 
-const now = dayjs().toISOString();
+const from = dayjs().format("YYYY-MM-DDT00:00:00");
+const to = dayjs().format("YYYY-MM-DDT23:59:59");
 const username = "yasudanaoya"
 const variables = `
 {
   "userName": "${username}",
-  "date": "${now}"
+  "from": "${from}",
+  "to": "${to}"
 }`;
 
 const url = "https://api.github.com/graphql";
@@ -32,4 +34,10 @@ const { data } = await ky.post(url, {
   json,
 }).json()
 
-console.log(data.user.contributionsCollection.contributionCalendar.totalContributions);
+const totalContributions: number = data.user.contributionsCollection.contributionCalendar.totalContributions;
+
+if (totalContributions > 0) {
+  console.log("コミットしてます")
+} else {
+  console.log("コミットしてません")
+}
