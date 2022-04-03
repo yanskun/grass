@@ -1,6 +1,6 @@
 import ky from "https://cdn.skypack.dev/ky@0.28.5?dts";
 import dayjs from "https://cdn.skypack.dev/dayjs@1.10.4";
-import { READ_USER_TOKEN } from "./env.ts";
+import { READ_USER_TOKEN, WEBHOOK_URL } from "./env.ts";
 
 const query = `
 query($userName:String!, $from:DateTime, $to:DateTime) {
@@ -36,8 +36,18 @@ const { data } = await ky.post(url, {
 
 const totalContributions: number = data.user.contributionsCollection.contributionCalendar.totalContributions;
 
+let message: string
 if (totalContributions > 0) {
-  console.log("草生えてます")
+  message = `草生やしました（${totalContributions}） `
 } else {
-  console.log("草生えてません")
+  message = `草生やしてません。`
 }
+
+ky.post(WEBHOOK_URL, {
+  headers: {
+    "Content-Type": "application/json",
+  },
+  json: {
+    text: message,
+ },
+})
