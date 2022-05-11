@@ -1,5 +1,4 @@
-import ky from "https://cdn.skypack.dev/ky@0.28.5?dts";
-import dayjs from "https://cdn.skypack.dev/dayjs@1.10.4";
+import { ky, dayjs } from "./deps.ts";
 import { READ_USER_TOKEN, WEBHOOK_URL } from "./env.ts";
 
 const query = `
@@ -42,6 +41,8 @@ if (totalContributions > 0) {
 } else {
   message = `草生やしてません。`
 }
+
+console.log(message);
 
 ky.post(WEBHOOK_URL, {
   headers: {
