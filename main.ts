@@ -35,20 +35,13 @@ const { data } = await ky.post(url, {
 
 const totalContributions: number = data.user.contributionsCollection.contributionCalendar.totalContributions;
 
-let message: string
-if (totalContributions > 0) {
-  message = `草生やしました（${totalContributions}） `
-} else {
-  message = `草生やしてません。`
+if (totalContributions === 0) {
+  ky.post(WEBHOOK_URL, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    json: {
+      text: '今日は草生やしてません。',
+   },
+  })
 }
-
-console.log(message);
-
-ky.post(WEBHOOK_URL, {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  json: {
-    text: message,
- },
-})
