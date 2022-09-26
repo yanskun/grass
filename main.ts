@@ -1,4 +1,4 @@
-import { ky, dayjs } from "./deps.ts";
+import { dayjs, ky } from "./deps.ts";
 import { READ_USER_TOKEN, WEBHOOK_URL } from "./env.ts";
 
 const query = `
@@ -15,7 +15,7 @@ query($userName:String!, $from:DateTime, $to:DateTime) {
 
 const from = dayjs().format("YYYY-MM-DDT00:00:00");
 const to = dayjs().format("YYYY-MM-DDT23:59:59");
-const username = "yasudanaoya"
+const username = "yanskun";
 const variables = `
 {
   "userName": "${username}",
@@ -31,9 +31,10 @@ const { data } = await ky.post(url, {
     Authorization: `Bearer ${READ_USER_TOKEN}`,
   },
   json,
-}).json()
+}).json();
 
-const totalContributions: number = data.user.contributionsCollection.contributionCalendar.totalContributions;
+const totalContributions: number =
+  data.user.contributionsCollection.contributionCalendar.totalContributions;
 
 if (totalContributions === 0) {
   ky.post(WEBHOOK_URL, {
@@ -41,7 +42,7 @@ if (totalContributions === 0) {
       "Content-Type": "application/json",
     },
     json: {
-      text: '今日は草生やしてません。',
-   },
-  })
+      text: "今日は草生やしてません。",
+    },
+  });
 }
